@@ -3,6 +3,7 @@ import 'package:personal_exp_app/models/transaction.dart';
 import 'package:personal_exp_app/widgtes/new_transaction.dart';
 import 'package:personal_exp_app/widgtes/transaction_list.dart';
 import 'package:flutter/material.dart';
+import 'widgtes/chart.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,13 +21,12 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.purple,
         fontFamily: 'ShantellSans',
         textTheme: ThemeData.light().textTheme.copyWith(
-          titleMedium: TextStyle(
-            fontFamily: "ShantellSans",
-            fontWeight: FontWeight.bold,
-            fontSize: 20
-          ),
-        ),
-        ),
+              titleMedium: TextStyle(
+                  fontFamily: "ShantellSans",
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20),
+            ),
+      ),
       home: MyHomePage(),
     );
   }
@@ -40,6 +40,12 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> userTransaction = [];
 
+  List<Transaction> get _recentTransaction {
+    return userTransaction.where((tx) {
+      return tx.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
+    }).toList();
+  }
+
   void _addNewTransaction(String txTitile, double txAmount) {
     final newTx = Transaction(
         titile: txTitile,
@@ -51,12 +57,13 @@ class _MyHomePageState extends State<MyHomePage> {
       userTransaction.add(newTx);
     });
   }
-  void startAddNewTransaction(BuildContext ctx){
+
+  void startAddNewTransaction(BuildContext ctx) {
     showModalBottomSheet(
         context: ctx,
-        builder: (_){
+        builder: (_) {
           return GestureDetector(
-            onTap: (){},
+            onTap: () {},
             child: newTransactions(_addNewTransaction),
             behavior: HitTestBehavior.opaque,
           );
@@ -66,34 +73,29 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Personal Expenses'),
-          actions: [
-            IconButton(onPressed: (){
-              startAddNewTransaction(context);
-            }, icon: Icon(Icons.add))
+      appBar: AppBar(
+        title: Text('Personal Expenses'),
+        actions: [
+          IconButton(
+              onPressed: () {
+                startAddNewTransaction(context);
+              },
+              icon: Icon(Icons.add))
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Chart(_recentTransaction),
+            TransactionList(userTransaction)
           ],
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                width: double.infinity,
-                child: Card(
-                  color: Colors.grey,
-                  child: Text('Chart!'),
-                  elevation: 5,
-                ),
-              ),
-              TransactionList(userTransaction)
-            ],
-          ),
-        ),
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-          onPressed: (){
-          startAddNewTransaction(context);
+      floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () {
+            startAddNewTransaction(context);
           }),
     );
   }
