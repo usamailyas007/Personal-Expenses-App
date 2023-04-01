@@ -44,17 +44,23 @@ class _MyHomePageState extends State<MyHomePage> {
     return userTransaction.where((tx) {
       return tx.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
     }).toList();
-  }
+  } 
 
-  void _addNewTransaction(String txTitile, double txAmount) {
+  void _addNewTransaction(String txTitile, double txAmount, DateTime dateChoosen) {
     final newTx = Transaction(
         titile: txTitile,
         id: DateTime.now().toString(),
         amount: txAmount,
-        date: DateTime.now());
-
+        date: dateChoosen);
+ 
     setState(() {
       userTransaction.add(newTx);
+    });
+  }
+
+  void _deleteTransactions(String id){
+    setState(() {
+      userTransaction.removeWhere((tx) => tx.id == id);
     });
   }
 
@@ -87,7 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           children: [
             Chart(_recentTransaction),
-            TransactionList(userTransaction)
+            TransactionList(userTransaction, _deleteTransactions)
           ],
         ),
       ),
