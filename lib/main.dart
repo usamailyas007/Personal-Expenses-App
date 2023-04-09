@@ -39,26 +39,28 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> userTransaction = [];
+  bool _showChart = false;
 
   List<Transaction> get _recentTransaction {
     return userTransaction.where((tx) {
       return tx.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
     }).toList();
-  } 
+  }
 
-  void _addNewTransaction(String txTitile, double txAmount, DateTime dateChoosen) {
+  void _addNewTransaction(
+      String txTitile, double txAmount, DateTime dateChoosen) {
     final newTx = Transaction(
         titile: txTitile,
         id: DateTime.now().toString(),
         amount: txAmount,
         date: dateChoosen);
- 
+
     setState(() {
       userTransaction.add(newTx);
     });
   }
 
-  void _deleteTransactions(String id){
+  void _deleteTransactions(String id) {
     setState(() {
       userTransaction.removeWhere((tx) => tx.id == id);
     });
@@ -78,22 +80,60 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+    final appBar = AppBar(
+      title: Text('Personal Expenses'),
+      actions: [
+        IconButton(
+            onPressed: () {
+              startAddNewTransaction(context);
+            },
+            icon: Icon(Icons.add))
+      ],
+    );
+    final txListWidget = Container(
+        height: (MediaQuery.of(context).size.height -
+                appBar.preferredSize.height -
+                MediaQuery.of(context).padding.top) *
+            0.7,
+        child: TransactionList(userTransaction, _deleteTransactions));
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Personal Expenses'),
-        actions: [
-          IconButton(
-              onPressed: () {
-                startAddNewTransaction(context);
-              },
-              icon: Icon(Icons.add))
-        ],
-      ),
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Chart(_recentTransaction),
-            TransactionList(userTransaction, _deleteTransactions)
+            if (isLandscape)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Show Chart'),
+                  Switch(
+                      value: _showChart,
+                      onChanged: (val) {
+                        setState(() {
+                          _showChart = val;
+                        });
+                      })
+                ],
+              ),
+            if (!isLandscape)
+              Container(
+                  height: (MediaQuery.of(context).size.height -
+                          appBar.preferredSize.height -
+                          MediaQuery.of(context).padding.top) *
+                      0.23,
+                  child: Chart(_recentTransaction)),
+            if (!isLandscape) txListWidget,
+            if (isLandscape)
+              _showChart
+                  ? Container(
+                      height: (MediaQuery.of(context).size.height -
+                              appBar.preferredSize.height -
+                              MediaQuery.of(context).padding.top) *
+                          0.6,
+                      child: Chart(_recentTransaction))
+                  : txListWidget
           ],
         ),
       ),

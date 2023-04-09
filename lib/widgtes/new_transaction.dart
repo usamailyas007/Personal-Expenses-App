@@ -52,67 +52,69 @@ class _newTransactionsState extends State<newTransactions> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-        elevation: 5,
-        child: Container(
-          padding: EdgeInsets.only(
-            top: 10,
-            left: 10,
-            right: 10,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 10
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              TextField(
-                controller: titileController,
-                decoration: InputDecoration(labelText: 'Title'),
-                onSubmitted: (_) => submitData(),
-              ),
-              TextField(
-                controller: amountController,
-                decoration: InputDecoration(labelText: "Amount"),
-                onSubmitted: (_) => submitData(),
-              ),
-              Container(
-                height: 80,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(_selectedDate == null ? 'No Date Choosen!!' : DateFormat.yMd().format(_selectedDate)),
-                    TextButton(
-                        onPressed: () {
-                          _presentDatePicker();
-                        },
-                        child: Text(
-                          'Choose date',
-                          style:
-                          TextStyle(color: Theme
-                              .of(context)
-                              .primaryColor, fontWeight: FontWeight.bold),
-                        ))
-                  ],
+    return SingleChildScrollView(
+      child: Card(
+          elevation: 5,
+          child: Container(
+            padding: EdgeInsets.only(
+              top: 10,
+              left: 10,
+              right: 10,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 10
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                TextField(
+                  controller: titileController,
+                  decoration: InputDecoration(labelText: 'Title'),
+                  onSubmitted: (_) => submitData(),
                 ),
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                height: 50,
-                width: 150,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25)
-                      )
-                  ),
-                  onPressed: submitData,
-                  child: Text(
-                    'Add Transactions',
-                    style: TextStyle(color: Colors.white),
+                TextField(
+                  controller: amountController,
+                  decoration: InputDecoration(labelText: "Amount"),
+                  onSubmitted: (_) => submitData(),
+                ),
+                Container(
+                  height: 80,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(_selectedDate == null ? 'No Date Choosen!!' : DateFormat.yMd().format(_selectedDate)),
+                      TextButton(
+                          onPressed: () {
+                            _presentDatePicker();
+                          },
+                          child: Text(
+                            'Choose date',
+                            style:
+                            TextStyle(color: Theme
+                                .of(context)
+                                .primaryColor, fontWeight: FontWeight.bold),
+                          ))
+                    ],
                   ),
                 ),
-              )
-            ],
-          ),
-        ));
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                  height: 50,
+                  width: 150,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25)
+                        )
+                    ),
+                    onPressed: submitData,
+                    child: Text(
+                      'Add Transactions',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          )),
+    );
   }
 }
